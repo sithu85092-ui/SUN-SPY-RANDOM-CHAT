@@ -5075,7 +5075,12 @@
        JAVASCRIPT
        ========================================================= -->
 
-  <script src="script.js"></script>
+<script>
+window.SUNSPY_CONFIG = {
+  signalingUrl: "wss://sun-spy-signaling.onrender.com/ws"
+};
+</script>
 
+<script src="script.js"></script>
 </body>
 </html>
