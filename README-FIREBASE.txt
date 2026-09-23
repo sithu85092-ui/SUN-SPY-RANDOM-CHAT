@@ -1,19 +1,25 @@
-SUN SPY - Firebase Auth Update
+SUN SPY — Firebase Auth + Admin Control Center
 
-Files:
-- index.html
-- style.css
-- script.js
-
-Firebase project:
-- sun-spy
-- authDomain: sun-spy.firebaseapp.com
-- GitHub Pages domain: sithu85092-ui.github.io
+Included:
+- Firebase Email/Password authentication
+- Firebase Google authentication
+- Normal user app remains available to the admin account
+- Admin-only Control Center button (🛡️ ADMIN)
+- Responsive dark Admin Dashboard UI
+- User search shell
+- Coin/Wallet management UI
+- Users, Private Media, Chats, Reports, Moderation, Payments, Live, Verification, Support, Audit, Security and Settings sections
+- Admin back-to-app button
 
 IMPORTANT:
-1. Firebase Authentication -> Sign-in method -> Google must be Enabled.
-2. If Email/Password login and signup are wanted, enable Email/Password too.
-3. Authorized domains must include sithu85092-ui.github.io.
-4. Google login uses the Firebase Auth account; fake Gmail + arbitrary password will no longer work.
-5. The current browser-side admin gate recognizes sithu85092@gmail.com. For production-grade admin security, move admin authorization to Firebase custom claims / a trusted backend and verify ID tokens server-side.
-6. Do not put Firebase service-account private keys in the website.
+1. Enable Firebase Authentication > Email/Password and Google.
+2. Add sithu85092-ui.github.io to Firebase Authentication > Settings > Authorized domains.
+3. Current frontend admin identity is sithu85092@gmail.com. This is NOT production-grade authorization by itself.
+4. Coin buttons currently affect the currently connected local account only. Global user coin control requires a secured backend/Firestore admin API.
+5. The current Random Chat is peer-to-peer WebRTC. There is no server-side archive of private video/chat content. Admin chat/media review requires a backend with explicit authorization, storage and audit logging.
+6. Never put a Firebase service-account private key in the website.
+
+Deploy:
+- Replace index.html, style.css and script.js in the GitHub Pages repository.
+- Commit/push.
+- Open the GitHub Pages site and hard refresh the browser.

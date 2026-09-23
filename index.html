@@ -473,6 +473,15 @@
 
 
         <button
+          id="adminQuickBtn"
+          class="admin-quick-btn hidden"
+          type="button"
+          aria-label="Open Admin Dashboard"
+        >
+          🛡️ ADMIN
+        </button>
+
+        <button
           id="logoutBtn"
           class="icon-btn"
           type="button"
@@ -4509,561 +4518,84 @@
 
 
   <!-- =========================================================
-       ADMIN APPLICATION
+       ADMIN CONTROL CENTER
+       Visible only to the authorized admin account.
+       Normal user features remain available separately.
        ========================================================= -->
 
   <section
     id="adminScreen"
-    class="screen hidden"
+    class="screen hidden admin-screen"
     aria-label="SUN SPY Administration"
   >
 
-
     <header class="admin-topbar">
-
-      <div>
-
-        <span class="admin-logo">
-          ☀ SUN SPY
-        </span>
-
-        <span class="admin-label">
-          ADMIN
-        </span>
-
+      <div class="admin-brand-wrap">
+        <span class="admin-logo">☀ SUN SPY</span>
+        <span class="admin-label">ADMIN CONTROL</span>
       </div>
-
-
       <div class="top-actions">
-
-        <button
-          id="adminNotificationBtn"
-          class="icon-btn"
-          type="button"
-        >
-          🔔
-        </button>
-
-        <button
-          id="adminLogoutBtn"
-          class="icon-btn"
-          type="button"
-        >
-          ⇥
-        </button>
-
+        <button id="adminBackBtn" class="admin-top-btn" type="button">← App</button>
+        <button id="adminLogoutBtn" class="icon-btn" type="button" aria-label="Logout">⇥</button>
       </div>
-
     </header>
 
-
-
     <main class="admin-content">
-
-
-      <div class="admin-heading">
-
+      <div class="admin-heading admin-hero">
         <div>
-
-          <p class="small-label">
-            CONTROL CENTER
-          </p>
-
-          <h1>
-            Admin Dashboard
-          </h1>
-
-          <p class="muted">
-            Manage SUN SPY safely and transparently.
-          </p>
-
+          <p class="small-label">CONTROL CENTER</p>
+          <h1>Admin Dashboard</h1>
+          <p class="muted">Manage users, coins, moderation, reports, payments and platform settings.</p>
         </div>
-
+        <div class="admin-online-pill">● Admin online</div>
       </div>
 
-
-
-      <!-- ADMIN STATS -->
-
-      <div class="stats-grid">
-
-        <div class="stat-card">
-
-          <span>
-            👥
-          </span>
-
-          <strong id="statUsers">
-            0
-          </strong>
-
-          <small>
-            Users
-          </small>
-
-        </div>
-
-
-        <div class="stat-card">
-
-          <span>
-            💎
-          </span>
-
-          <strong id="statPremium">
-            0
-          </strong>
-
-          <small>
-            Paid Plans
-          </small>
-
-        </div>
-
-
-        <div class="stat-card">
-
-          <span>
-            ⚠️
-          </span>
-
-          <strong id="statReports">
-            0
-          </strong>
-
-          <small>
-            Reports
-          </small>
-
-        </div>
-
-
-        <div class="stat-card">
-
-          <span>
-            🔴
-          </span>
-
-          <strong id="statLive">
-            0
-          </strong>
-
-          <small>
-            Live Now
-          </small>
-
-        </div>
-
+      <div class="admin-stats-grid">
+        <div class="admin-stat-card"><span>👥</span><div><strong id="statUsers">—</strong><small>Total Users</small></div></div>
+        <div class="admin-stat-card"><span>🪙</span><div><strong id="statCoins">—</strong><small>Coins in System</small></div></div>
+        <div class="admin-stat-card"><span>⚠️</span><div><strong id="statReports">—</strong><small>Reports</small></div></div>
+        <div class="admin-stat-card"><span>🔴</span><div><strong id="statLive">—</strong><small>Live Sessions</small></div></div>
       </div>
 
-
-
-      <!-- USER MANAGEMENT -->
-
-      <section class="admin-section">
-
-        <h2>
-          User Management
-        </h2>
-
-
-        <div class="admin-search">
-
-          <input
-            id="userSearch"
-            type="search"
-            placeholder="Search username or email..."
-          >
-
-          <button
-            class="small-btn"
-            id="searchUserBtn"
-            type="button"
-          >
-            Search
-          </button>
-
+      <section class="admin-section admin-search-card">
+        <div class="admin-section-title"><div><p class="small-label">USER CONTROL</p><h2>Find a user</h2></div></div>
+        <div class="admin-search-row">
+          <input id="userSearch" type="search" placeholder="Search username, email or UID...">
+          <button class="primary-btn admin-action-btn" id="searchUserBtn" type="button">Search</button>
         </div>
-
-
-        <div
-          id="adminUserList"
-          class="user-list"
-        ></div>
-
+        <div id="adminUserList" class="admin-user-results"></div>
       </section>
 
-
-
-      <!-- ADMIN MANAGEMENT -->
-
       <section class="admin-section">
-
-        <h2>
-          Management
-        </h2>
-
-
-        <div class="admin-menu">
-
-
-          <button
-            class="admin-menu-item"
-            data-admin-page="users"
-            type="button"
-          >
-
-            <span>
-              👥
-            </span>
-
-            <div>
-
-              <strong>
-                Users
-              </strong>
-
-              <small>
-                Accounts and permissions
-              </small>
-
-            </div>
-
-            ›
-
-          </button>
-
-
-          <button
-            class="admin-menu-item"
-            data-admin-page="verification"
-            type="button"
-          >
-
-            <span>
-              🪪
-            </span>
-
-            <div>
-
-              <strong>
-                Verification
-              </strong>
-
-              <small>
-                Review verification status
-              </small>
-
-            </div>
-
-            ›
-
-          </button>
-
-
-          <button
-            class="admin-menu-item"
-            data-admin-page="reports"
-            type="button"
-          >
-
-            <span>
-              ⚠️
-            </span>
-
-            <div>
-
-              <strong>
-                Reports
-              </strong>
-
-              <small>
-                Review user reports
-              </small>
-
-            </div>
-
-            ›
-
-          </button>
-
-
-          <button
-            class="admin-menu-item"
-            data-admin-page="moderation"
-            type="button"
-          >
-
-            <span>
-              🛡️
-            </span>
-
-            <div>
-
-              <strong>
-                Moderation
-              </strong>
-
-              <small>
-                Posts, comments and live safety
-              </small>
-
-            </div>
-
-            ›
-
-          </button>
-
-
-          <button
-            class="admin-menu-item"
-            data-admin-page="payments"
-            type="button"
-          >
-
-            <span>
-              💳
-            </span>
-
-            <div>
-
-              <strong>
-                Payments
-              </strong>
-
-              <small>
-                Subscriptions and transactions
-              </small>
-
-            </div>
-
-            ›
-
-          </button>
-
-
-          <button
-            class="admin-menu-item"
-            data-admin-page="coins"
-            type="button"
-          >
-
-            <span>
-              🪙
-            </span>
-
-            <div>
-
-              <strong>
-                Coins & Gifts
-              </strong>
-
-              <small>
-                Transactions and rewards
-              </small>
-
-            </div>
-
-            ›
-
-          </button>
-
-
-          <button
-            class="admin-menu-item"
-            data-admin-page="shop"
-            type="button"
-          >
-
-            <span>
-              🛍️
-            </span>
-
-            <div>
-
-              <strong>
-                Shop
-              </strong>
-
-              <small>
-                Coins, gifts and items
-              </small>
-
-            </div>
-
-            ›
-
-          </button>
-
-
-          <button
-            class="admin-menu-item"
-            data-admin-page="giveaways"
-            type="button"
-          >
-
-            <span>
-              🎉
-            </span>
-
-            <div>
-
-              <strong>
-                Giveaways
-              </strong>
-
-              <small>
-                Events and eligibility
-              </small>
-
-            </div>
-
-            ›
-
-          </button>
-
-
-          <button
-            class="admin-menu-item"
-            data-admin-page="live"
-            type="button"
-          >
-
-            <span>
-              🔴
-            </span>
-
-            <div>
-
-              <strong>
-                Live Management
-              </strong>
-
-              <small>
-                Live rooms and reports
-              </small>
-
-            </div>
-
-            ›
-
-          </button>
-
-
-          <button
-            class="admin-menu-item"
-            data-admin-page="support"
-            type="button"
-          >
-
-            <span>
-              💬
-            </span>
-
-            <div>
-
-              <strong>
-                Support
-              </strong>
-
-              <small>
-                Support tickets
-              </small>
-
-            </div>
-
-            ›
-
-          </button>
-
-
-          <button
-            class="admin-menu-item"
-            data-admin-page="audit"
-            type="button"
-          >
-
-            <span>
-              📋
-            </span>
-
-            <div>
-
-              <strong>
-                Audit Logs
-              </strong>
-
-              <small>
-                Track administrative actions
-              </small>
-
-            </div>
-
-            ›
-
-          </button>
-
-
-          <button
-            class="admin-menu-item"
-            data-admin-page="security"
-            type="button"
-          >
-
-            <span>
-              🔐
-            </span>
-
-            <div>
-
-              <strong>
-                Security Events
-              </strong>
-
-              <small>
-                Login and suspicious activity
-              </small>
-
-            </div>
-
-            ›
-
-          </button>
-
+        <div class="admin-section-title"><div><p class="small-label">PLATFORM</p><h2>Administration</h2></div></div>
+        <div class="admin-control-grid">
+          <button class="admin-control-card" data-admin-page="users" type="button"><span>👥</span><strong>Users</strong><small>Accounts, status, plans and permissions</small></button>
+          <button class="admin-control-card" data-admin-page="coins" type="button"><span>🪙</span><strong>Coins & Wallets</strong><small>Add, remove, freeze and inspect coin history</small></button>
+          <button class="admin-control-card" data-admin-page="media" type="button"><span>🖼️</span><strong>Private Media</strong><small>Review private media only when authorized/reported</small></button>
+          <button class="admin-control-card" data-admin-page="chats" type="button"><span>💬</span><strong>Chats</strong><small>Moderation queue and reported conversations</small></button>
+          <button class="admin-control-card" data-admin-page="reports" type="button"><span>⚠️</span><strong>Reports</strong><small>Review user reports and take action</small></button>
+          <button class="admin-control-card" data-admin-page="moderation" type="button"><span>🛡️</span><strong>Moderation</strong><small>Warnings, bans and content safety</small></button>
+          <button class="admin-control-card" data-admin-page="payments" type="button"><span>💳</span><strong>Payments</strong><small>Orders, subscriptions and transactions</small></button>
+          <button class="admin-control-card" data-admin-page="live" type="button"><span>🔴</span><strong>Live Management</strong><small>Live sessions, reports and safety actions</small></button>
+          <button class="admin-control-card" data-admin-page="verification" type="button"><span>🪪</span><strong>Verification</strong><small>Identity and account verification queue</small></button>
+          <button class="admin-control-card" data-admin-page="support" type="button"><span>🎧</span><strong>Support</strong><small>Support tickets and user assistance</small></button>
+          <button class="admin-control-card" data-admin-page="audit" type="button"><span>📋</span><strong>Audit Logs</strong><small>Every administrative action is recorded</small></button>
+          <button class="admin-control-card" data-admin-page="security" type="button"><span>🔐</span><strong>Security</strong><small>Login events, suspicious activity and access</small></button>
+          <button class="admin-control-card" data-admin-page="settings" type="button"><span>⚙️</span><strong>Settings</strong><small>Plans, coin prices and platform configuration</small></button>
         </div>
-
       </section>
 
-
-
-      <!-- ADMIN SECURITY NOTICE -->
+      <section id="adminDetailPanel" class="admin-detail-panel hidden">
+        <div class="admin-detail-head"><div><p class="small-label">ADMIN TOOL</p><h2 id="adminDetailTitle">Users</h2></div><button id="adminDetailClose" class="admin-top-btn" type="button">Close</button></div>
+        <div id="adminDetailBody"></div>
+      </section>
 
       <div class="admin-warning">
-
-        <span>
-          🔐
-        </span>
-
-        <div>
-
-          <strong>
-            Security Notice
-          </strong>
-
-          <p>
-            Production admin actions must be authorized and
-            validated by the backend. Frontend role checks are
-            not security controls.
-          </p>
-
-        </div>
-
+        <span>🔐</span>
+        <div><strong>Admin security</strong><p>Private media and chat moderation should be accessed through audited backend permissions. The frontend alone is not a security boundary.</p></div>
       </div>
-
     </main>
-
   </section>
-
 
 
   <!-- =========================================================

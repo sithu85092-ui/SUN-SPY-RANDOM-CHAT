@@ -558,6 +558,7 @@
 
     $("#logoutBtn")?.addEventListener("click", logout);
     $("#adminLogoutBtn")?.addEventListener("click", logout);
+    setupAdminDashboard();
 
     if (window.firebase?.auth) {
       firebase.auth().onAuthStateChanged(async user => {
@@ -633,29 +634,121 @@
     saveState();
 
     if (isAdmin) {
-      openAdmin();
-      if (!silent) toast("Admin login successful.", "success");
+      openApp();
+      showAdminQuickAccess(true);
+      if (!silent) toast("Admin login successful. Admin Dashboard is available from the 🛡️ button.", "success");
     } else {
       openApp();
+      showAdminQuickAccess(false);
       if (!silent) toast("Login successful.", "success");
     }
   }
 
+  function showAdminQuickAccess(show) {
+    const btn = $("#adminQuickBtn");
+    if (!btn) return;
+    btn.classList.toggle("hidden", !show);
+  }
+
   function openAdmin() {
+    if (!state.user?.isAdmin) {
+      return toast("Admin access denied.");
+    }
     showOnlyScreen("adminScreen");
-    if ($("#adminUserEmail")) $("#adminUserEmail").textContent = state.user?.email || "";
+    setupAdminDashboard();
     updateAdminStats();
   }
 
   function updateAdminStats() {
     const users = $("#statUsers");
-    if (users) users.textContent = "—";
-    const premium = $("#statPremium");
-    if (premium) premium.textContent = "—";
+    const coins = $("#statCoins");
     const reports = $("#statReports");
-    if (reports) reports.textContent = "—";
     const live = $("#statLive");
-    if (live) live.textContent = "—";
+    if (users) users.textContent = "1+";
+    if (coins) coins.textContent = Number(state.coins || 0).toLocaleString();
+    if (reports) reports.textContent = "—";
+    if (live) live.textContent = randomChatPeer ? "1" : "0";
+  }
+
+  let adminDashboardReady = false;
+
+  function setupAdminDashboard() {
+    if (adminDashboardReady) return;
+    adminDashboardReady = true;
+
+    $("#adminQuickBtn")?.addEventListener("click", openAdmin);
+    $("#adminBackBtn")?.addEventListener("click", () => {
+      showOnlyScreen("appScreen");
+      showAdminQuickAccess(true);
+      navigateToPage("homePage", false);
+    });
+    $("#adminDetailClose")?.addEventListener("click", () => {
+      $("#adminDetailPanel")?.classList.add("hidden");
+    });
+
+    document.addEventListener("click", e => {
+      const card = e.target.closest("[data-admin-page]");
+      if (!card) return;
+      if (!state.user?.isAdmin) return toast("Admin access denied.");
+      openAdminTool(card.dataset.adminPage || "users");
+    });
+
+    $("#searchUserBtn")?.addEventListener("click", searchAdminUser);
+    $("#userSearch")?.addEventListener("keydown", e => {
+      if (e.key === "Enter") searchAdminUser();
+    });
+  }
+
+  function searchAdminUser() {
+    const list = $("#adminUserList");
+    if (!list) return;
+    const q = ($("#userSearch")?.value || "").trim().toLowerCase();
+    const u = state.user || {};
+    const matches = !q || [u.username, u.email, u.uid].some(v => String(v || "").toLowerCase().includes(q));
+    if (!matches) {
+      list.innerHTML = '<div class="admin-tool-note">No user found in the currently connected admin session. A Firestore/backend user index is required for global user search.</div>';
+      return;
+    }
+    list.innerHTML = `
+      <div class="admin-user-card">
+        <div><strong>${escapeHTML(u.username || "User")}</strong><small>${escapeHTML(u.email || "")} · UID: ${escapeHTML(u.uid || "—")}</small></div>
+        <div class="admin-user-actions"><button type="button" data-admin-page="coins">Coins</button><button type="button" data-admin-page="users">Manage</button></div>
+      </div>`;
+  }
+
+  function openAdminTool(page) {
+    const panel = $("#adminDetailPanel");
+    const title = $("#adminDetailTitle");
+    const body = $("#adminDetailBody");
+    if (!panel || !title || !body) return;
+    const names = {
+      users:"Users", coins:"Coins & Wallets", media:"Private Media", chats:"Chats", reports:"Reports", moderation:"Moderation", payments:"Payments", live:"Live Management", verification:"Verification", support:"Support", audit:"Audit Logs", security:"Security", settings:"Settings"
+    };
+    title.textContent = names[page] || "Admin Tool";
+
+    const current = state.user || {};
+    if (page === "coins") {
+      body.innerHTML = `
+        <div class="admin-tool-note">Current user wallet: <strong>${Number(state.coins || 0).toLocaleString()} Coins</strong>. Global coin changes must be performed by the secured backend/Firestore rules, not trusted frontend code.</div>
+        <div class="admin-tool-grid"><button class="admin-tool-btn success" type="button" data-admin-coin="add">+ Add 100</button><button class="admin-tool-btn danger" type="button" data-admin-coin="remove">− Remove 100</button><button class="admin-tool-btn" type="button" data-admin-coin="freeze">Freeze Wallet</button><button class="admin-tool-btn" type="button" data-admin-coin="history">View History</button></div>`;
+      body.querySelectorAll("[data-admin-coin]").forEach(btn => btn.addEventListener("click", () => {
+        const action = btn.dataset.adminCoin;
+        if (action === "add") { state.coins = Number(state.coins || 0) + 100; addCoinTransaction(100, "admin", "Admin coin adjustment"); updateUserUI(); updateAdminStats(); toast("+100 Coins applied to the current local account.", "success"); }
+        else if (action === "remove") { state.coins = Math.max(0, Number(state.coins || 0) - 100); addCoinTransaction(-100, "admin", "Admin coin adjustment"); updateUserUI(); updateAdminStats(); toast("100 Coins removed from the current local account.", "success"); }
+        else toast("This control needs the secure backend/Firestore admin API.");
+      }));
+    } else if (page === "users") {
+      body.innerHTML = `<div class="admin-tool-note"><strong>Current admin:</strong> ${escapeHTML(current.email || "")}<br><br>User management should include account status, plan, verification, coin balance, reports, moderation actions and session controls. Global user records require a server-side user index.</div><div class="admin-tool-grid"><button class="admin-tool-btn" type="button">View Profile</button><button class="admin-tool-btn danger" type="button">Suspend User</button><button class="admin-tool-btn" type="button">Reset Password</button><button class="admin-tool-btn" type="button">Logout Devices</button></div>`;
+      body.querySelectorAll("button").forEach(btn => btn.addEventListener("click", () => toast("Secure backend action required.")));
+    } else if (page === "media") {
+      body.innerHTML = '<div class="admin-tool-note">Private photos/media are intentionally not exposed by the frontend. The production version should show only media attached to a valid report/moderation case, with reason, admin identity and audit log. Firebase Storage + server-side authorization is required.</div>';
+    } else if (page === "chats") {
+      body.innerHTML = '<div class="admin-tool-note">Chat moderation can show reported conversations and safety metadata. The current Random Chat uses peer-to-peer WebRTC, so there is no server-side message/video archive for an admin to read. To support admin chat review, messaging must be persisted through an authorized backend.</div>';
+    } else {
+      body.innerHTML = `<div class="admin-tool-note"><strong>${escapeHTML(names[page] || "Admin Tool")}</strong><br><br>This control center is ready for the secured backend data source. Actions that affect other users should be authenticated with Firebase ID tokens, authorized server-side and written to an audit log.</div>`;
+    }
+    panel.classList.remove("hidden");
+    panel.scrollIntoView({behavior:"smooth", block:"start"});
   }
 
   async function logout() {
@@ -664,6 +757,7 @@
     } catch (err) { console.error(err); }
     state.user = null;
     saveState();
+    showAdminQuickAccess(false);
     showOnlyScreen("authScreen");
     $("#loginForm")?.classList.remove("hidden");
     $("#signupForm")?.classList.add("hidden");
